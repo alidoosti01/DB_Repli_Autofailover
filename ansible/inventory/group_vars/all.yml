@@ -1,0 +1,17 @@
+---
+
+RESOLVIP1: "SNI_ip"
+RESOLVIP2: "SNI_ip"
+
+MYSQL_ROOT_PASSWORD: "1qaz@WSX"
+MYSQL_USER_PASSWORD: "1qaz@WSX"
+
+SERVER_IP: "(Your_server_ip)"
+
+DB_IMAGE: "mariadb:10.3"
+# DB_VER: "10.3"
+
+FO_IMAGE: "mariadb/maxscale:6.3.1"
+# FO_VER: "6.3.1"
+
+REDIS_IMAGE: "redis:7.0"

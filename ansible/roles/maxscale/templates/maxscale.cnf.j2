@@ -1,0 +1,42 @@
+[maxscale]
+threads = auto
+log_augmentation = 1
+ms_timestamp = 1
+
+[server1]
+type     = server
+address  = {{ SERVER_IP }}
+port     = 3306
+protocol = MariaDBBackend
+proxy_protocol=yes
+
+[server2]
+type     = server
+address  = {{ SERVER_IP }}
+port     = 3307
+protocol = MariaDBBackend
+proxy_protocol=yes
+
+[monitor]
+type                    = monitor
+module                  = mariadbmon
+servers                 = server1,server2
+user                    = maxscale
+password                = {{ MYSQL_USER_PASSWORD }}
+auto_failover           = true
+auto_rejoin             = true
+enforce_read_only_slaves = 1
+monitor_interval        = 2s
+
+[Splitter-Service]
+type=service
+router=readwritesplit
+servers=server1,server2
+user=maxscale
+password={{ MYSQL_USER_PASSWORD }}
+
+[Splitter-Listener]
+type=listener
+service=Splitter-Service
+protocol=MariaDBClient
+port=3306

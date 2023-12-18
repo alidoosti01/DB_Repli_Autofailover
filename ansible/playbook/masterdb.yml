@@ -1,0 +1,6 @@
+---
+
+- name: master file config
+  hosts: all
+  roles:
+    - masterdb

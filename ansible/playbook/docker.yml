@@ -1,0 +1,6 @@
+---
+
+- name: install docker and pull images
+  hosts: all
+  roles:
+    - docker

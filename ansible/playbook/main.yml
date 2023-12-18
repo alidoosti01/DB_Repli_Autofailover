@@ -1,0 +1,9 @@
+---
+
+- import_playbook: resolver.yml
+- import_playbook: docker.yml
+- import_playbook: masterdb.yml
+- import_playbook: slavedb.yml
+- import_playbook: maxscale.yml
+- import_playbook: compos.yml
+- import_playbook: pyapp.yml

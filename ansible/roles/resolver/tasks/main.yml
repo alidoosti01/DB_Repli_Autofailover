@@ -1,0 +1,31 @@
+---
+- name: add the hostname to hosts
+  become: true
+  lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1 {{ ansible_facts.hostname }}"
+
+- name: install resolvconf
+  become: true
+  apt:
+    name: resolvconf
+    state: present
+    update_cache: true
+
+- name: edit and add IP in resolv
+  become: true
+  lineinfile:
+    path: /etc/resolv.conf
+    line: "{{ item }}"
+  loop:
+    - "nameserver {{ RESOLVIP1 }}"
+    - "nameserver {{ RESOLVIP2 }}"
+
+- name: edit head from resolvconf
+  become: true
+  lineinfile:
+    path: /etc/resolvconf/resolv.conf.d/head
+    line: "{{ item }}"
+  loop:
+    - "nameserver {{ RESOLVIP1 }}"
+    - "nameserver {{ RESOLVIP2 }}"

@@ -1,0 +1,6 @@
+---
+
+- name: maxscale config and file
+  hosts: all
+  roles:
+    - maxscale

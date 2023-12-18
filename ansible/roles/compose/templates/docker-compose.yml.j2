@@ -1,0 +1,53 @@
+--- 
+
+version: "3"
+
+services:
+  mariadb:
+    container_name: mariadb-master
+    image: {{ DB_IMAGE }}
+    ports:
+      - 3306:3306
+    volumes:
+      - /opt/project/master/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /opt/project/master/data:/var/lib/mysql
+      - /opt/project/master/my.cnf:/etc/mysql/my.cnf
+      - /opt/project/master/log:/var/log/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ MYSQL_ROOT_PASSWORD }}
+      - MYSQL_PASSWORD={{ MYSQL_USER_PASSWORD }}
+
+  mariadb-slave:
+    container_name: mariadb-slave
+    image: {{ DB_IMAGE }}
+    depends_on:
+      - mariadb
+    ports:
+      - 3307:3306
+    command: --init-file /etc/mysql/init.sql
+    volumes:
+      - /opt/project/slave/init.sql:/etc/mysql/init.sql
+      - /opt/project/slave/data:/var/lib/mysql
+      - /opt/project/slave/my.cnf:/etc/mysql/my.cnf
+      - /opt/project/slave/log:/var/log/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ MYSQL_ROOT_PASSWORD }}
+      - MYSQL_PASSWORD={{ MYSQL_USER_PASSWORD }}
+
+  maxscale:
+    container_name: maxscale
+    image: {{ FO_IMAGE }}
+    depends_on:
+      - mariadb-slave
+    ports:
+      - 8989:8989
+      - 3308:3306
+    volumes:
+      - /opt/project/maxscale/maxscale.cnf:/etc/maxscale.cnf
+    restart: always
+
+  redis:
+    container_name: redis_server
+    image: redis:7.0
+    ports:
+       - 6379:6379

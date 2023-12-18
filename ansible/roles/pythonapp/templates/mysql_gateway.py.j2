@@ -1,0 +1,19 @@
+import mysql.connector
+
+class MysqlGateway:
+    def query_mysql(self, query_string):
+        db_con = mysql.connector.connect(
+            host='localhost',
+            user='my_shop_user',
+            password='{{ MYSQL_USER_PASSWORD }}',
+            database='my_shop'
+        )
+
+        db_cursor = db_con.cursor(dictionary=True)
+        db_cursor.execute(query_string)
+        products = db_cursor.fetchall()
+
+        db_cursor.close()  # Close the cursor
+        db_con.close()  # Close the connection
+
+        return products

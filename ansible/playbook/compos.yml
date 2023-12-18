@@ -1,0 +1,6 @@
+--- 
+
+- name: run docker compose file
+  hosts: all
+  roles:
+    - compose

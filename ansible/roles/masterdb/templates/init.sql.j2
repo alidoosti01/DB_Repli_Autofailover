@@ -1,0 +1,15 @@
+CREATE USER 'slave'@'%' IDENTIFIED BY '{{ MYSQL_USER_PASSWORD }}';
+CREATE USER 'maxscale'@'%' IDENTIFIED BY '{{ MYSQL_USER_PASSWORD }}';
+GRANT REPLICATION SLAVE ON *.* TO 'slave'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'maxscale'@'%';
+CHANGE MASTER TO MASTER_HOST='{{ SERVER_IP }}', MASTER_USER='slave', MASTER_PASSWORD='{{ MYSQL_USER_PASSWORD }}', MASTER_PORT=3307, MASTER_CONNECT_RETRY=10, MASTER_USE_GTID=current_pos;
+CREATE USER 'my_shop_user'@'%' IDENTIFIED BY '{{ MYSQL_USER_PASSWORD }}';
+CREATE DATABASE my_shop;
+GRANT ALL PRIVILEGES ON my_shop.* TO 'my_shop_user'@'%';
+FLUSH PRIVILEGES;
+USE my_shop;
+CREATE TABLE products ( product_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, product_name VARCHAR(50), retail_price DOUBLE ) ENGINE = InnoDB;
+INSERT INTO products (product_name, retail_price) VALUES ('Ahan alat kharidarim', 90);
+INSERT INTO products (product_name, retail_price) VALUES ('Farshid Kohneye kasif', 10);
+INSERT INTO products (product_name, retail_price) VALUES ('Dastmal kaghazy POONEH', 85);
+INSERT INTO products (product_name, retail_price) VALUES ('Shir Khoshke bacheye FARSHID', 25);

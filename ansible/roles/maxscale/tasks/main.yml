@@ -1,0 +1,12 @@
+---
+
+- name: make maxscale directory
+  file:
+    path: /opt/project/maxscale
+    state: directory
+
+- name: maxscale config file
+  template:
+    src: maxscale.cnf.j2
+    dest: /opt/project/maxscale/maxscale.cnf
+

@@ -1,0 +1,22 @@
+---
+
+- name: make slave databse directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /opt/project/slave
+    - /opt/project/slave/data
+    - /opt/project/slave/log
+
+- name: slave databse config file
+  template:
+    src: my.cnf.j2
+    dest: /opt/project/slave/my.cnf
+    mode: "0644"
+
+- name: slave database init file
+  template:
+    src: init.sql.j2
+    dest: /opt/project/slave/init.sql
+    mode: "0644"

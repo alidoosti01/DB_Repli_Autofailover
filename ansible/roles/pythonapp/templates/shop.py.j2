@@ -1,0 +1,69 @@
+import mysql.connector
+import http.server
+from http import HTTPStatus
+import socketserver
+import json
+import redis
+import mysql_gateway
+
+class MysqlGateway:
+    def query_mysql(self, query_string):
+        db_con = mysql.connector.connect(
+            host='5.34.197.112',
+            user='my_shop_user',
+            password='{{ MYSQL_USER_PASSWORD }}',
+            database='my_shop'
+        )
+
+        db_cursor = db_con.cursor(dictionary=True)
+        db_cursor.execute(query_string)
+        products = db_cursor.fetchall()
+
+        db_cursor.close()
+        db_con.close()
+
+        return products
+
+class HttpHandler(http.server.SimpleHTTPRequestHandler):
+
+    def do_GET(self):
+
+        self.send_response(HTTPStatus.OK)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+
+        query_string = "select * from products"
+        redis_server = redis.Redis()
+        resp = {}
+
+        if redis_server.get(query_string) is None:
+            obj  =  mysql_gateway.MysqlGateway()
+            products = obj.query_mysql(query_string)
+
+            resp = {
+
+                "_source": "MySQL Server",
+                 "data": products
+            }
+
+            redis_server.setex(query_string, 60, value = json.dumps(products))
+
+        else:
+            products = json.loads(redis_server.get(query_string).decode("utf-8"))
+            resp = {
+
+                "_source": "Redis Server - Retrieved from Cache",
+                 "data": products
+            }
+
+        self.wfile.write(bytes(json.dumps(resp, indent = 2), "utf8"))
+
+httpd = socketserver.TCPServer(('', 8080), HttpHandler)
+print("The HTTP server is running at port 8080...")
+
+try:
+    httpd.serve_forever()
+
+except KeyboardInterrupt:
+    httpd.server_close()
+    print("The HTTP server has stopped running.")

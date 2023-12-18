@@ -1,0 +1,23 @@
+---
+
+- name: make master database directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /opt/project
+    - /opt/project/master
+    - /opt/project/master/data
+    - /opt/project/master/log
+
+- name: master database config file
+  template:
+    src: my.cnf.j2
+    dest: /opt/project/master/my.cnf
+    mode: "0644"
+
+- name: master database init file
+  template:
+    src: init.sql.j2
+    dest: /opt/project/master/init.sql
+    mode: "0644"

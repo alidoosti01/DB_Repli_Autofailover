@@ -1,0 +1,45 @@
+---
+
+- name: make python directory
+  file:
+    path: /opt/project/shop
+    state: directory
+
+- name: python shop application
+  template:
+    src: shop.py.j2
+    dest: /opt/project/shop/shop.py
+
+- name: python connecttion DB
+  template:
+    src: mysql_gateway.py.j2
+    dest: /opt/project/shop/mysql_gateway.py
+
+- name: install python library
+  pip:
+    name: "{{ item }}"
+  loop:
+    - mysql.connector
+    # - http.server
+    # - socketserver
+    # - http
+    # - json
+    - redis
+
+- name: python script
+  shell: python3 /opt/project/shop/shop.py >/dev/null 2>&1 &
+  async: 10
+  poll: 0
+
+# - name: asying python task 
+#   command: python3 /opt/project/shop/shop.py &
+#   async: 10
+#   poll: 0
+
+# - name: run python shop application
+#   command:
+#     cmd: python3 /opt/project/shop/shop.py &
+#   register: result
+
+# - debug:
+#     msg: "{{ result }}"

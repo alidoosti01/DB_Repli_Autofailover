@@ -1,0 +1,6 @@
+---
+
+- name: slave config file
+  hosts: all
+  roles:
+    - slavedb

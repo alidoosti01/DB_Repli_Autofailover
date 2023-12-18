@@ -1,0 +1,5 @@
+---
+- name: install resolver and set SNI
+  hosts: all
+  roles:
+    - resolver

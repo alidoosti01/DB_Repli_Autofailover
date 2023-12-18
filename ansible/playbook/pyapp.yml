@@ -1,0 +1,6 @@
+---
+
+- name: run python application
+  hosts: all
+  roles:
+    - pythonapp
